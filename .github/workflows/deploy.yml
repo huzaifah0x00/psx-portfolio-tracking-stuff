@@ -27,23 +27,20 @@ jobs:
 
       - name: Deploy to Droplet
         uses: appleboy/ssh-action@v1.0.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           host: 64.226.79.131
           username: tempcicd
           password: "TempPass2024!"
-          envs: GITHUB_REPOSITORY,GITHUB_TOKEN
           script: |
             set -e
             REPO_PATH=~/psx-portfolio-tracking-stuff
             if [ -d "$REPO_PATH/.git" ]; then
               cd "$REPO_PATH"
-              git remote set-url origin https://${GITHUB_TOKEN}@github.com/huzaifah0x00/psx-portfolio-tracking-stuff.git
+              git remote set-url origin https://github.com/huzaifah0x00/psx-portfolio-tracking-stuff.git
               git fetch origin
               git reset --hard origin/main
             else
-              git clone https://${GITHUB_TOKEN}@github.com/huzaifah0x00/psx-portfolio-tracking-stuff.git "$REPO_PATH"
+              git clone https://github.com/huzaifah0x00/psx-portfolio-tracking-stuff.git "$REPO_PATH"
               cd "$REPO_PATH"
             fi
             npm ci --omit=dev
