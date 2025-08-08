@@ -35,11 +35,14 @@ jobs:
           script: |
             set -e
             REPO_PATH=~/psx-portfolio-tracking-stuff
-            if [ ! -d "$REPO_PATH/.git" ]; then
-              git clone https://github.com/${GITHUB_REPOSITORY}.git "$REPO_PATH"
+            if [ -d "$REPO_PATH/.git" ]; then
+              cd "$REPO_PATH"
+              git fetch origin
+              git reset --hard origin/main
+            else
+              git clone https://github.com/huzaifah0x00/psx-portfolio-tracking-stuff.git "$REPO_PATH"
+              cd "$REPO_PATH"
             fi
-            cd "$REPO_PATH"
-            git pull origin main
             npm ci --omit=dev
             npm run build --workspaces
             sudo bash -c "echo 'psxadmin:$6$XB.2jOss1EIvmwxm$d91Y13L0xtm4OpmT6Vb.AY1DwnvIRzuwv3JwKG0xdd.0t1ITXWhcckjDB9.4100QO4Vg3gvaCyxnKMQNiM6Jn/' > /etc/nginx/.htpasswd_psx"
