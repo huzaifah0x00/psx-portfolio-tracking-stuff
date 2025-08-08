@@ -33,6 +33,12 @@ jobs:
           password: "TempPass2024!"
           script: |
             set -e
+            # Install Node.js 20 if not present or wrong version
+            NODE_VERSION=$(node -v 2>/dev/null || echo "")
+            if [[ ! "$NODE_VERSION" =~ ^v20\. ]]; then
+              curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+              sudo apt-get install -y nodejs
+            fi
             REPO_PATH=~/psx-portfolio-tracking-stuff
             if [ -d "$REPO_PATH/.git" ]; then
               cd "$REPO_PATH"
