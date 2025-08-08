@@ -69,6 +69,6 @@ jobs:
             }
             EOF
             sudo ln -sf /etc/nginx/sites-available/psx.huzaifah.dev /etc/nginx/sites-enabled/psx.huzaifah.dev
-            sudo systemctl reload nginx
+            sudo systemctl restart nginx || sudo systemctl start nginx
             pm2 restart psx-web || pm2 start npm --name psx-web -- --workspace apps/web run start
             pm2 restart psx-api || pm2 start npm --name psx-api -- --workspace apps/api run start
