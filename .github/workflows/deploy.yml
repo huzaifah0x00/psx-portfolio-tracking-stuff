@@ -49,7 +49,7 @@ jobs:
               git clone https://github.com/huzaifah0x00/psx-portfolio-tracking-stuff.git "$REPO_PATH"
               cd "$REPO_PATH"
             fi
-            npm ci --omit=dev
+            npm ci
             npm run build --workspaces
             sudo bash -c "echo 'psxadmin:$6$XB.2jOss1EIvmwxm$d91Y13L0xtm4OpmT6Vb.AY1DwnvIRzuwv3JwKG0xdd.0t1ITXWhcckjDB9.4100QO4Vg3gvaCyxnKMQNiM6Jn/' > /etc/nginx/.htpasswd_psx"
             sudo tee /etc/nginx/sites-available/psx.huzaifah.dev >/dev/null <<'EOF'
