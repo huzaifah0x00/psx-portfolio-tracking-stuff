@@ -1,0 +1,65 @@
+name: Deploy to DigitalOcean Droplet
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint --workspaces --if-present
+
+      - name: Build
+        run: npm run build --workspaces
+
+      - name: Deploy to Droplet
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: 64.226.79.131
+          username: tempcicd
+          password: "TempPass2024!"
+          envs: GITHUB_REPOSITORY
+          script: |
+            set -e
+            REPO_PATH=~/psx-portfolio-tracking-stuff
+            if [ ! -d "$REPO_PATH/.git" ]; then
+              git clone https://github.com/${GITHUB_REPOSITORY}.git "$REPO_PATH"
+            fi
+            cd "$REPO_PATH"
+            git pull origin main
+            npm ci --omit=dev
+            npm run build --workspaces
+            sudo bash -c "echo 'psxadmin:$6$XB.2jOss1EIvmwxm$d91Y13L0xtm4OpmT6Vb.AY1DwnvIRzuwv3JwKG0xdd.0t1ITXWhcckjDB9.4100QO4Vg3gvaCyxnKMQNiM6Jn/' > /etc/nginx/.htpasswd_psx"
+            sudo tee /etc/nginx/sites-available/psx.huzaifah.dev >/dev/null <<'EOF'
+            server {
+              listen 80;
+              server_name psx.huzaifah.dev;
+              auth_basic "Restricted";
+              auth_basic_user_file /etc/nginx/.htpasswd_psx;
+              location / {
+                proxy_pass http://localhost:3000;
+                proxy_http_version 1.1;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection 'upgrade';
+                proxy_set_header Host $host;
+                proxy_cache_bypass $http_upgrade;
+              }
+            }
+            EOF
+            sudo ln -sf /etc/nginx/sites-available/psx.huzaifah.dev /etc/nginx/sites-enabled/psx.huzaifah.dev
+            sudo systemctl reload nginx
+            pm2 restart psx-web || pm2 start npm --name psx-web -- --workspace apps/web run start
+            pm2 restart psx-api || pm2 start npm --name psx-api -- --workspace apps/api run start
