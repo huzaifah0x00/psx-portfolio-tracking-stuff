@@ -39,6 +39,16 @@ The project uses **npm workspaces** to manage multiple applications:
   npm -w apps/api run build
   ```
 
+## Deployment
+
+This repository includes a GitHub Actions workflow that builds the apps and deploys them to a DigitalOcean Droplet.
+
+- Deployment targets `psx.huzaifah.dev` and configures Nginx with basic HTTP authentication.
+- Default credentials: **psxadmin / TempAuth2024!** (hash: `$6$XB.2jOss1EIvmwxm$d91Y13L0xtm4OpmT6Vb.AY1DwnvIRzuwv3JwKG0xdd.0t1ITXWhcckjDB9.4100QO4Vg3gvaCyxnKMQNiM6Jn/`)
+- The workflow currently hardcodes SSH and auth details for demonstration. **Move these values into GitHub Secrets** before using in production.
+
+The workflow also provisions an Nginx site and manages `pm2` processes `psx-web` and `psx-api` on the remote server.
+
 ## License
 
 This project is released under the MIT License.

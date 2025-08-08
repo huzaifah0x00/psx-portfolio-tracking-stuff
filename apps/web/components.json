@@ -3,13 +3,6 @@
   "style": "default",
   "rsc": true,
   "tsx": true,
-  "tailwind": {
-    "config": "tailwind.config.js",
-    "css": "app/globals.css",
-    "baseColor": "zinc"
-  },
-  "aliases": {
-    "components": "@/components",
-    "utils": "@/lib/utils"
-  }
+  "tailwind": { "config": "tailwind.config.js", "css": "app/globals.css", "baseColor": "zinc" },
+  "aliases": { "components": "@/components", "utils": "@/lib/utils" }
 }
